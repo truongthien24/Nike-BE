@@ -2,33 +2,39 @@ const connection = require("../config/database");
 const jwt = require("jsonwebtoken");
 
 const postCreateUser = (req, res) => {
-  const email = req?.body?.email;
-  const name = req?.body?.name;
-  const city = req?.body?.city;
+  const {email, tenDangNhap, matKhau, city} = req?.body;
   connection.query(
     `INSERT INTO 
-      Users (email, name, city)
+    TaiKhoan (email, tenDangNhap, city, matKhau)
       VALUES (?, ?, ?)`,
-    [email, name, city],
+    [email, tenDangNhap, city, matKhau],
     (err, results) => {
-      res.send("Created user success");
+      if(err) {
+        res.status(400).json({message: 'Tài khoản đã tồn tại'})
+      }
+      if(results.length > 0) {
+        res.status(200).json({message: "Created user success"});
+      }
     }
   );
 };
 
 const loginUser = (req, res) => {
-  const {name, password} = req.body;
+  const {tenDangNhap, matKhau} = req.body;
+  console.log('req', req.body)
+
   connection.query(
-    `SELECT * FROM Users Where name = ? AND password = ?`,
-    [name, password],
+    `SELECT * FROM TaiKhoan Where tenDangNhap = ? AND matKhau = ?`,
+    [tenDangNhap, matKhau],
     (err, results) => {
+      console.log('results', results)
       if (err) {
         throw err;
       }
       if (results.length > 0) {
-        const id = results[0]?.id;
+        const user = results[0];
         // Đăng ký token
-        const token = jwt.sign({ id }, "jwtSecretKey", { expiresIn: 300 });
+        const token = jwt.sign({ user }, "jwtSecretKey", { expiresIn: 300 });
         // Thành công trả về status 200 và message
         return res.status(200).json({
           token,
@@ -36,7 +42,7 @@ const loginUser = (req, res) => {
             city: results[0]?.city,
             email: results[0]?.email,
             id: results[0]?.id,
-            name: results[0]?.name,
+            tenDangNhap: results[0]?.tenDangNhap,
           },
           message: "Login sucess!",
         });
@@ -53,7 +59,7 @@ const loginUser = (req, res) => {
 const getAllUser = async (req, res) => {
   connection.query(
     `SELECT * FROM 
-      Users`,
+      TaiKhoan`,
     (err, results) => {
       res.status(200).json({ message: "Get user success", data: results });
     }
