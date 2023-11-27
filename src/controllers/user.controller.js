@@ -1,5 +1,6 @@
 const connection = require("../config/database");
 const jwt = require("jsonwebtoken");
+const db = require("../models");
 
 const postCreateUser = (req, res) => {
   const email = req?.body?.email;
@@ -17,7 +18,7 @@ const postCreateUser = (req, res) => {
 };
 
 const loginUser = (req, res) => {
-  const {name, password} = req.body;
+  const { name, password } = req.body;
   connection.query(
     `SELECT * FROM Users Where name = ? AND password = ?`,
     [name, password],
@@ -42,22 +43,26 @@ const loginUser = (req, res) => {
         });
       } else {
         // Thất bại trả về status 500 và message
-        return res
-          .status(400)
-          .json({ message: "Login fail!" });
+        return res.status(400).json({ message: "Login fail!" });
       }
     }
   );
 };
 
 const getAllUser = async (req, res) => {
-  connection.query(
-    `SELECT * FROM 
-      Users`,
-    (err, results) => {
-      res.status(200).json({ message: "Get user success", data: results });
-    }
-  );
+  // connection.query(
+  //   `SELECT * FROM
+  //     Users`,
+  //   (err, results) => {
+  //     res.status(200).json({ message: "Get user success", data: results });
+  //   }
+  // );
+  try {
+    const data = await db.User.findAll();
+    res.status(200).json({ message: "Get user success", data: data });
+  } catch (error) {
+    return res.status(400).json({ error: { message: error } });
+  }
 };
 
 module.exports = {

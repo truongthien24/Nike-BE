@@ -4,7 +4,7 @@ const morgan = require("morgan");
 const configViewEngie = require("./config/viewEngine");
 const webRoute = require("./routes/web");
 const apiRoute = require("./routes/api");
-const connection = require("./config/database");
+const connectDB = require("./config/database");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const swaggerDocs = require("./utils/swagger");
@@ -27,8 +27,11 @@ configViewEngie(app);
 
 app.use(cors({ origin: true }));
 
+// Kết nối DB
+connectDB()
+
 // Khai báo route
-app.use("/", webRoute);
+// app.use("/", webRoute);
 app.use("/api", apiRoute);
 
 
