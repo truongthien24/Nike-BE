@@ -58,3 +58,22 @@
 -- chạy image docker từ docker hub trên cloud 
 -- link: labs.play-with-docker.com
 
+
+
+
+==================== SEQuenlize ===========================
+- chạy lại migrate:  npx sequenlize-cli db:migrate 
+- chạy lại seed tất cả:  npx sequenlize-cli db:seed:all
+- Tạo demo một seed:  npx sequelize-cli seed:generate --name demo-user
+- init sequenlize:   node_modules/.bin/sequelize init
+- Tạo một model:   npx sequelize-cli model:generate --name User --attributes firstName:string,lastName:string,email:string
+
+
+
+==== set up sequelize
+
+- npm install --save-dev sequelize-cli@6.2.0 
+- npm install --save sequelize
+- npx sequelize-cli init
+
+
