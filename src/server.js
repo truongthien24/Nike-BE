@@ -31,7 +31,6 @@ app.use(cors({ origin: true }));
 connectDB()
 
 // Khai báo route
-// app.use("/", webRoute);
 app.use("/api", apiRoute);
 
 

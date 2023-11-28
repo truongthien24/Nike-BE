@@ -1,40 +1,33 @@
 const express = require("express");
-const { postCreateUser, loginUser, getAllUser } = require("../controllers/user.controller");
-const accountController  = require("../controllers/account.controller");
+const userController = require("../controllers/user.controller");
+const accountController = require("../controllers/account.controller");
+const sanPhamController = require("../controllers/sanPham.controller");
 
 const router = express.Router();
 
-/** 
- * @openapi
- * /create-user:
- *  post:
- *     tag: 
- *      -Create User
- *     summary: Create a user
- *     requestBody:
- *       required: true
- *       contents: 
- *         application/json:
- *           schema:
- *             $ref: '#components/schemas/LoginUserDto'
- */
+// ======================= User ===============================
+router.post("/create-user", userController.postCreateUser);
 
-router.post("/create-user", postCreateUser);
 
-router.post("/login-user", loginUser);
+// ======================= Account ===============================
+router.post("/register-account", accountController.registerAccount);
 
-router.get("/getAllUser", getAllUser)
+router.get("/get-all-account", accountController.getAllAccount);
 
-router.post("/register-account", accountController.registerAccount)
+router.patch("/update-account", accountController.updateAccount);
 
-router.get("/get-all-account", accountController.getAllAccount)
+router.delete("/delete-account", accountController.deleteAccount);
 
-router.patch("/update-account", accountController.updateAccount)
+router.post("/login", accountController.login);
+
+
+// ======================= Product ===============================
+router.post("/create-product", sanPhamController.createSanPham);
+
+router.get("/get-all-product", sanPhamController.getAllSanPham);
+
+router.patch("/update-product", sanPhamController.updateSanPham);
+
+router.delete("/delete-product", sanPhamController.deleteSanPham);
 
 module.exports = router;
-
-
-// *     description: Responds
-// *     responses: 
-// *        200:
-// *          description: App running
