@@ -30,4 +30,6 @@ router.patch("/update-product", sanPhamController.updateSanPham);
 
 router.delete("/delete-product", sanPhamController.deleteSanPham);
 
+router.post("/find-product", sanPhamController.findSanPham);
+
 module.exports = router;

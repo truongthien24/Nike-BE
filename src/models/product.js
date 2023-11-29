@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       soLuong: DataTypes.INTEGER,
       moTa: DataTypes.TEXT,
       noiDung: DataTypes.TEXT,
-      trangThai: DataTypes.BOOLEAN,
+      trangThai: DataTypes.INTEGER,
     },
     {
       sequelize,

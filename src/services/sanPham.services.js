@@ -17,7 +17,6 @@ const createNewSanPham = async (data) => {
       if (product) {
         resolve({ message: "Already product !", data: {} });
       } else {
-        
         const productNew = await db.SanPham.create({
           ...data,
         });
@@ -34,6 +33,33 @@ const getAllSanPham = async () => {
     try {
       const accounts = await db.SanPham.findAll();
       resolve({ data: accounts, message: "Get success" });
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+const findSanPham = async (data) => {
+  return new Promise(async (resolve, reject) => {
+    const { id, tenSanPham } = data;
+    try {
+      let products;
+      if (id) {
+        products = await db.SanPham.findOne({
+          where: {
+            id: id,
+          },
+        });
+      } else {
+        products = await db.SanPham.findAll({
+          where: {
+            tenSanPham: {
+              [Op.like]: `%${tenSanPham}%`,
+            },
+          },
+        });
+      }
+      resolve({ data: products, message: "Get success" });
     } catch (err) {
       reject(err);
     }
@@ -79,4 +105,5 @@ module.exports = {
   getAllSanPham,
   updateSanPham,
   deleteSanPham,
+  findSanPham,
 };

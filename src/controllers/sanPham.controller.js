@@ -24,6 +24,11 @@ const updateSanPham = async (req, res) => {
   }
 };
 
+const findSanPham = async (req, res) => {
+  const result = await ProductServices.findSanPham(req.body);
+  return res.status(200).json(result);
+}
+
 const deleteSanPham = async (req, res) => {
   const result = await ProductServices.deleteSanPham(req.body);
   if (result?.data) {
@@ -38,4 +43,5 @@ module.exports = {
   getAllSanPham,
   updateSanPham,
   deleteSanPham,
+  findSanPham,
 };
