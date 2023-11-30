@@ -14,6 +14,8 @@ router.post("/register-account", accountController.registerAccount);
 
 router.get("/get-all-account", accountController.getAllAccount);
 
+router.get("/get-account-by-ID/:id", accountController.getAccountByID);
+
 router.patch("/update-account", accountController.updateAccount);
 
 router.delete("/delete-account", accountController.deleteAccount);

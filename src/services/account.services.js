@@ -40,25 +40,46 @@ const getAllAccount = async () => {
   return new Promise(async (resolve, reject) => {
     try {
       const accounts = await db.TaiKhoan.findAll();
-      resolve({ data: accounts, message: "Get success" });
+      resolve({
+        data: accounts,
+        message: "Get success",
+      });
     } catch (err) {
       reject(err);
     }
   });
 };
 
+const getAccountByID = async (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const account = await db.TaiKhoan.findOne({where: {id: id}});
+      resolve({
+        data: account,
+        message: "Get success",
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+
 const updateAccount = async (data) => {
   return new Promise(async (resolve, reject) => {
     try {
+      const { id, matKhau, danhSachYeuThich, tenDangNhap, email } = data;
       // Check exits data
-      const account = await db.TaiKhoan.findOne({ where: { id: data?.id } });
+      const account = await db.TaiKhoan.findOne({ where: { id: id } });
       if (account) {
-        const hashPasswordFromBcrypt = data?.matKhau
-          ? await hashPassword(data?.matKhau)
+        const hashPasswordFromBcrypt = matKhau
+          ? await hashPassword(matKhau)
           : account?.password;
-        account.tenDangNhap = data?.tenDangNhap || account?.tenDangNhap;
+        account.tenDangNhap = tenDangNhap || account?.tenDangNhap;
         account.matKhau = hashPasswordFromBcrypt;
-        account.email = data?.email || account?.tenDangNhap;
+        account.email = email || account?.tenDangNhap;
+        account.danhSachYeuThich =
+          danhSachYeuThich || account?.danhSachYeuThich;
         await account.save();
         resolve({ data: account, message: "Update successfull" });
       } else {
@@ -105,9 +126,18 @@ const login = async (data) => {
         );
         if (checkPassword) {
           // Đăng ký token
-          const token = jwt.sign({ account }, "jwtSecretKey", {
-            expiresIn: 300,
-          });
+          const token = jwt.sign(
+            {
+              account: {
+                ...account,
+                danhSachYeuThich: JSON.parse(account?.danhSachYeuThich),
+              },
+            },
+            "jwtSecretKey",
+            {
+              expiresIn: 300,
+            }
+          );
           // Thành công trả về status 200 và message
           delete account.matKhau;
           resolve({
@@ -141,4 +171,5 @@ module.exports = {
   updateAccount,
   deleteAccount,
   login,
+  getAccountByID
 };

@@ -41,13 +41,21 @@ const getAllSanPham = async () => {
 
 const findSanPham = async (data) => {
   return new Promise(async (resolve, reject) => {
-    const { id, tenSanPham } = data;
+    const { id, tenSanPham, listId } = data;
     try {
       let products;
       if (id) {
         products = await db.SanPham.findOne({
           where: {
             id: id,
+          },
+        });
+      } else if (listId) {
+        products = await db.SanPham.findAll({
+          where: {
+            id: {
+              [Op.in]: listId,
+            },
           },
         });
       } else {
