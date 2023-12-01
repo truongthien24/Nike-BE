@@ -18,6 +18,17 @@ module.exports = (sequelize, DataTypes) => {
       email: DataTypes.STRING,
       cartId: DataTypes.STRING,
       infoPayment: DataTypes.STRING,
+      danhSachYeuThich: {
+        type: DataTypes.TEXT,
+        defaultValue: [],
+        get() {
+          const rawValue = this.getDataValue("danhSachYeuThich");
+          return rawValue ? JSON.parse(rawValue) : [];
+        },
+        set(value) {
+          this.setDataValue("danhSachYeuThich", JSON.stringify(value));
+        }
+      }
     },
     {
       sequelize,
