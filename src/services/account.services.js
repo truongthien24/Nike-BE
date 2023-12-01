@@ -106,7 +106,7 @@ const login = async (data) => {
         if (checkPassword) {
           // Đăng ký token
           const token = jwt.sign({ account }, "jwtSecretKey", {
-            expiresIn: 300,
+            expiresIn: "24h",
           });
           // Thành công trả về status 200 và message
           delete account.matKhau;
