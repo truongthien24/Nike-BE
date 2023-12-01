@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       cartId: DataTypes.STRING,
       infoPayment: DataTypes.STRING,
       danhSachYeuThich: {
-        type: DataTypes.JSON,
+        type: DataTypes.TEXT,
         defaultValue: [],
         get() {
           const rawValue = this.getDataValue("danhSachYeuThich");

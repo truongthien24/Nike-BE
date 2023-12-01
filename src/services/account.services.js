@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 
 const createNewAccount = async (data) => {
   return new Promise(async (resolve, reject) => {
+    console.log("data", data);
     try {
       // Check exits account
       const account = await db.TaiKhoan.findOne({
@@ -26,11 +27,15 @@ const createNewAccount = async (data) => {
         const hashPasswordFromBcrypt = await hashPassword(data?.matKhau);
         const dataResult = await db.TaiKhoan.create({
           ...data,
+          tenDangNhap: data?.tenDangNhap,
+          email: data?.email,
           matKhau: hashPasswordFromBcrypt,
+          danhSachYeuThich: [],
         });
         resolve({ message: "Register successfull", data: dataResult });
       }
     } catch (err) {
+      console.log("chạy vô 3");
       reject({ message: err });
     }
   });
@@ -53,7 +58,7 @@ const getAllAccount = async () => {
 const getAccountByID = async (id) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const account = await db.TaiKhoan.findOne({where: {id: id}});
+      const account = await db.TaiKhoan.findOne({ where: { id: id } });
       resolve({
         data: account,
         message: "Get success",
@@ -63,7 +68,6 @@ const getAccountByID = async (id) => {
     }
   });
 };
-
 
 const updateAccount = async (data) => {
   return new Promise(async (resolve, reject) => {
@@ -130,7 +134,6 @@ const login = async (data) => {
             {
               account: {
                 ...account,
-                danhSachYeuThich: JSON.parse(account?.danhSachYeuThich),
               },
             },
             "jwtSecretKey",
@@ -171,5 +174,5 @@ module.exports = {
   updateAccount,
   deleteAccount,
   login,
-  getAccountByID
+  getAccountByID,
 };
