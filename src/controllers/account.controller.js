@@ -52,6 +52,15 @@ const login = async (req, res) => {
   }
 };
 
+const forgetPassword = async (req, res) => {
+  const result = await AccountServices.forgetPassword(req.body);
+  if (result?.data) {
+    return res.status(200).json(result);
+  } else {
+    return res.status(400).json(result);
+  }
+}
+
 module.exports = {
   registerAccount,
   getAllAccount,
@@ -59,4 +68,5 @@ module.exports = {
   deleteAccount,
   login,
   getAccountByID,
+  forgetPassword,
 };
