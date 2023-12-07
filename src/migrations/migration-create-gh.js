@@ -8,12 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      maTaiKhoan: {
-        type: Sequelize.STRING,
-      },
-      maDonDatDang: {
-        type: Sequelize.STRING,
-      },
+      tongGia: Sequelize.INTEGER,
     });
   },
   down: async (queryInterface, Sequelize) => {

@@ -25,6 +25,9 @@ const createNewAccount = async (data) => {
         resolve({ message: "Already username or email !", data: {} });
       } else {
         const hashPasswordFromBcrypt = await hashPassword(data?.matKhau);
+        const gioHang = await db.GioHang.create({
+          ...data,
+        });
         const dataResult = await db.TaiKhoan.create({
           ...data,
           tenDangNhap: data?.tenDangNhap,

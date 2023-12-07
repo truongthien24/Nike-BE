@@ -13,8 +13,16 @@ module.exports = (sequelize, DataTypes) => {
   }
   ChiTietGioHang.init(
     {
-      maTaiKhoan: DataTypes.STRING,
-      maGioHang: DataTypes.STRING, 
+      soLuong: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      idGioHang: { 
+        type: DataTypes.INTEGER
+      },
+      idSanPham: {
+        type: DataTypes.INTEGER
+      }
     },
     {
       sequelize,
