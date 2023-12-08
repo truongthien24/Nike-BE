@@ -2,12 +2,14 @@ const ProductServices = require("../services/sanPham.services");
 const _ = require("lodash");
 
 const createSanPham = async (req, res) => {
-  const result = await ProductServices.createNewSanPham(req.body);
-  if (!_.isEmpty(result?.data)) {
+  try {
+    const result = await ProductServices.createNewSanPham(req.body);
     return res.status(200).json(result);
-  } else {
-    return res.status(400).json(result);
+  } catch (err) {
+
+    return res.status(400).json(err);
   }
+
 };
 
 const getAllSanPham = async (req, res) => {
@@ -30,7 +32,7 @@ const findSanPham = async (req, res) => {
 }
 
 const deleteSanPham = async (req, res) => {
-  const result = await ProductServices.deleteSanPham(req.body);
+  const result = await ProductServices.deleteSanPham(req.params);
   if (result?.data) {
     return res.status(200).json(result);
   } else {

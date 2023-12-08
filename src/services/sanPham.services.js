@@ -1,30 +1,33 @@
 const db = require("../models");
 const { Op } = require("sequelize");
+const { uploadToCloudinary } = require("../utils/uploadFileCloud");
 
 const createNewSanPham = async (data) => {
   return new Promise(async (resolve, reject) => {
-    try {
-      // Check exits account
-      const product = await db.SanPham.findOne({
-        where: {
-          [Op.or]: [
-            {
-              tenSanPham: data?.tenSanPham,
-            },
-          ],
-        },
+    const { hinhAnh } = data;
+    // Check exits account
+    const product = await db.SanPham.findOne({
+      where: {
+        [Op.or]: [
+          {
+            tenSanPham: data?.tenSanPham,
+          },
+        ],
+      },
+    });
+    if (product) {
+      resolve({ message: "Already product !", data: {} });
+    } else {
+      const uploadImage = await uploadToCloudinary(hinhAnh, "sanPham");
+
+      const productNew = await db.SanPham.create({
+        ...data,
+        hinhAnh: uploadImage.secure_url,
       });
-      if (product) {
-        resolve({ message: "Already product !", data: {} });
-      } else {
-        const productNew = await db.SanPham.create({
-          ...data,
-        });
-        resolve({ message: "Create successfull", data: productNew });
-      }
-    } catch (err) {
-      reject({ message: err });
+
+      resolve({ message: "Create successfull", data: productNew });
     }
+    reject({ message: "Lôi roi" });
   });
 };
 
@@ -76,10 +79,27 @@ const findSanPham = async (data) => {
 
 const updateSanPham = async (data) => {
   return new Promise(async (resolve, reject) => {
+    const { tenSanPham, maThuongHieu, maMauSac, maKichCo, maKhuyenMai, hinhAnh, giaSanPham, soLuong, moTa, noiDung, trangThai, id } = data;
     try {
       // Check exits data
-      const product = await db.SanPham.findOne({ where: { id: data?.id } });
+      const product = await db.SanPham.findOne({ where: { id: id } });
       if (product) {
+        let image = product?.hinhAnh;
+        if(hinhAnh?.reupload) {
+          image = await uploadToCloudinary(hinhAnh?.file, "sanPham");
+        }
+        product.tenSanPham = tenSanPham || product?.tenSanPham;
+        product.maThuongHieu = maThuongHieu || product.maThuongHieu;
+        product.maMauSac = maMauSac || product.maMauSac;
+        product.maKichCo = maKichCo || product.maKichCo;
+        product.maKhuyenMai = maKhuyenMai || product.maKhuyenMai;
+        product.hinhAnh = image || product.hinhAnh;
+        product.giaSanPham = giaSanPham || product.giaSanPham;
+        product.soLuong = soLuong || product.soLuong;
+        product.moTa = moTa || product?.moTa;
+        product.trangThai = trangThai || product?.trangThai;
+        product.noiDung =
+          noiDung || product?.noiDung;
         await product.save();
         resolve({ data: product, message: "Update successfull" });
       } else {

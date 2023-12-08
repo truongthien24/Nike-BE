@@ -33,9 +33,9 @@ router.post("/create-product", sanPhamController.createSanPham);
 
 router.get("/get-all-product", sanPhamController.getAllSanPham);
 
-router.patch("/update-product", sanPhamController.updateSanPham);
+router.patch("/update-product/:id", sanPhamController.updateSanPham);
 
-router.delete("/delete-product", sanPhamController.deleteSanPham);
+router.delete("/delete-product/:id", sanPhamController.deleteSanPham);
 
 router.post("/find-product", sanPhamController.findSanPham);
 
