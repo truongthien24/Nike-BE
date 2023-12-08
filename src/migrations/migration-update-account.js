@@ -3,7 +3,7 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     try {
       await queryInterface.addColumn("TaiKhoans", "danhSachYeuThich", {
-        type: Sequelize.JSON,
+        type: Sequelize.TEXT,
         defaultValue: [],
         get() {
           const rawValue = this.getDataValue("danhSachYeuThich");

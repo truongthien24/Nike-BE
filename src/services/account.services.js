@@ -3,10 +3,10 @@ const { Op } = require("sequelize");
 const bcrypt = require("bcryptjs");
 const { hashPassword } = require("../utils/function");
 const jwt = require("jsonwebtoken");
+const sendEmail = require("../utils/sendEmail");
 
 const createNewAccount = async (data) => {
   return new Promise(async (resolve, reject) => {
-    console.log("data", data);
     try {
       // Check exits account
       const account = await db.TaiKhoan.findOne({
@@ -25,6 +25,9 @@ const createNewAccount = async (data) => {
         resolve({ message: "Already username or email !", data: {} });
       } else {
         const hashPasswordFromBcrypt = await hashPassword(data?.matKhau);
+        const gioHang = await db.GioHang.create({
+          ...data,
+        });
         const dataResult = await db.TaiKhoan.create({
           ...data,
           tenDangNhap: data?.tenDangNhap,
@@ -81,7 +84,7 @@ const updateAccount = async (data) => {
           : account?.password;
         account.tenDangNhap = tenDangNhap || account?.tenDangNhap;
         account.matKhau = hashPasswordFromBcrypt;
-        account.email = email || account?.tenDangNhap;
+        account.email = email || account?.email;
         account.danhSachYeuThich =
           danhSachYeuThich || account?.danhSachYeuThich;
         await account.save();
@@ -168,6 +171,50 @@ const login = async (data) => {
   });
 };
 
+const forgetPassword = async (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // Check exits data
+      const { email, danhSachYeuThich } = data;
+      const account = await db.TaiKhoan.findOne({ where: { email: email } });
+
+      if (account) {
+        const characters =
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        let result = "";
+
+        for (let i = 0; i < 6; i++) {
+          const randomIndex = Math.floor(Math.random() * characters.length);
+          result += characters.charAt(randomIndex);
+        }
+        const hashPasswordFromBcrypt = await hashPassword(result);
+        await sendEmail(email, "New password", result);
+        // await db.TaiKhoan.update(
+        //   { matKhau: hashPasswordFromBcrypt },
+        //   {
+        //     where: {
+        //       email: email,
+        //     },
+        //   }
+        // )
+        account.tenDangNhap = account?.tenDangNhap;
+        account.matKhau = hashPasswordFromBcrypt;
+        account.email = account?.email;
+        account.danhSachYeuThich = account?.danhSachYeuThich;
+        await account.save();
+        resolve({
+          data: hashPasswordFromBcrypt,
+          message: "Send email success",
+        });
+      } else {
+        resolve({ data: {}, message: "Email is not registered" });
+      }
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
 module.exports = {
   createNewAccount,
   getAllAccount,
@@ -175,4 +222,5 @@ module.exports = {
   deleteAccount,
   login,
   getAccountByID,
+  forgetPassword,
 };
