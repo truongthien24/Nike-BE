@@ -15,12 +15,14 @@ module.exports = (sequelize, DataTypes) => {
     {
       soLuong: {
         type: DataTypes.INTEGER,
-        allowNull: false,
       },
-      idGioHang: { 
+      idCart: { 
         type: DataTypes.INTEGER
       },
       idSanPham: {
+        type: DataTypes.INTEGER
+      },
+      thanhTien: {
         type: DataTypes.INTEGER
       }
     },

@@ -11,6 +11,23 @@ module.exports = {
       soLuong: {
         type: Sequelize.INTEGER,
       },
+      idCart: { 
+        type: Sequelize.INTEGER
+      },
+      idSanPham: {
+        type: Sequelize.INTEGER
+      },
+      thanhTien: {
+        type: Sequelize.INTEGER
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {

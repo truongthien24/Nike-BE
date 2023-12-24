@@ -29,7 +29,19 @@ module.exports = (sequelize, DataTypes) => {
         set(value) {
           this.setDataValue("danhSachYeuThich", JSON.stringify(value));
         }
+      },
+      thongTinNhanHang: {
+        type: DataTypes.TEXT,
+        defaultValue: [],
+        get() {
+          const rawValue = this.getDataValue("thongTinNhanHang");
+          return rawValue ? JSON.parse(rawValue) : [];
+        },
+        set(value) {
+          this.setDataValue("thongTinNhanHang", JSON.stringify(value));
+        }
       }
+
     },
     {
       sequelize,

@@ -16,16 +16,35 @@ const getAllGioHang = async (req, res) => {
 };
 
 const findGioHang = async (req, res) => {
+  try {
     const result = await GioHangServices.findGioHang(req.body);
+    if (result) {
+      res.status(200).json(result)
+    }
+  } catch (err) {
     return res.status(200).json(result);
   }
+}
+
+const getGioHangByID = async (req, res) => {
+  try {
+    const result = await GioHangServices.findGioHang(req.params);
+    if (result) {
+      res.status(200).json(result)
+    }
+  } catch (err) {
+    return res.status(400).json(err);
+  }
+}
 
 const updateGioHang = async (req, res) => {
-  const result = await GioHangServices.updateGioHang(req.body);
-  if (!_.isEmpty(result?.data)) {
+  try {
+    const result = await GioHangServices.updateGioHang(req.body);
+    if (result) {
     return res.status(200).json(result);
-  } else {
-    return res.status(400).json(result);
+    }
+  } catch (err) {
+    return res.status(400).json(err);
   }
 };
 
@@ -44,4 +63,5 @@ module.exports = {
   updateGioHang,
   deleteGioHang,
   findGioHang,
+  getGioHangByID,
 };

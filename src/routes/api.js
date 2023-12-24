@@ -3,6 +3,11 @@ const userController = require("../controllers/user.controller");
 const accountController = require("../controllers/account.controller");
 const sanPhamController = require("../controllers/sanPham.controller");
 const gioHangController = require("../controllers/gioHang.controller");
+const chiTietGioHangController = require("../controllers/chiTietGioHang.controller");
+const kichCoController = require("../controllers/kichCo.controller");
+const danhGiaController = require("../controllers/danhGia.controller");
+const donHangController = require("../controllers/donHang.controller");
+const { paymentOnline } = require("../utils/paymentOnline");
 
 const router = express.Router();
 
@@ -45,11 +50,31 @@ router.post("/create-cart", gioHangController.createGioHang);
 
 router.get("/get-all-cart", gioHangController.getAllGioHang);
 
-router.patch("/update-cart", gioHangController.updateGioHang);
+router.patch("/update-cart/:id", gioHangController.updateGioHang);
 
 router.delete("/delete-cart", gioHangController.deleteGioHang);
 
 router.post("/find-cart", gioHangController.findGioHang);
+
+router.get("/get-cart-by-ID/:id", gioHangController.getGioHangByID);
+
+router.post("/thanhToan", paymentOnline);
+
+
+// ========================= Detail Cart ========================
+router.post('/create-detail-cart', chiTietGioHangController.createChiTietGioHang);
+
+// ========================= Kích cở ============================
+router.post('/create-kichCo', kichCoController.createKichCo)
+router.get('/get-all-kichCo', kichCoController.getAllKichCo)
+
+// ========================= Đánh giá ============================
+router.post('/create-danhGia', danhGiaController.createDanhGia)
+router.get('/get-all-danhGia', danhGiaController.getAllDanhGia)
+
+
+// ========================= Đơn hàng ============================
+router.post('/create-donHang', donHangController.createNewDonHang)
 
 
 module.exports = router;

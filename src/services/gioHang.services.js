@@ -27,34 +27,70 @@ const getAllGioHang = async () => {
 
 const findGioHang = async (data) => {
   return new Promise(async (resolve, reject) => {
-    const { idAccount } = data;
-    try {
-      const products = await db.GioHang.findAll({
+    const { id } = data;
+    const gioHang = await db.GioHang.findOne({
+      where: {
+        id: id,
+      },
+    });
+    if (gioHang) {
+      let tongGia = 0;
+      let chiTietGioHang = await db.ChiTietGioHang.findAll({
         where: {
-          maTaiKhoan: idAccount,
-        },
-      });
-
-      resolve({ data: products, message: "Get success" });
-    } catch (err) {
-      reject(err);
+          idCart: gioHang.id,
+        }
+      })
+      for (let i = 0; i < chiTietGioHang.length; i++) {
+        const sanPham = await db.SanPham.findOne({
+          where: {
+            id: chiTietGioHang[i].dataValues.idSanPham,
+          }
+        })
+        chiTietGioHang[i].dataValues.sanPham = sanPham.dataValues;
+        tongGia += chiTietGioHang[i].dataValues.thanhTien;
+      }
+      if (chiTietGioHang) {
+        resolve({
+          data: {
+            ...gioHang.dataValues,
+            tongGia: tongGia,
+            danhSach: chiTietGioHang
+          }, message: "Get success"
+        });
+      }
+    } else {
+      reject({ data: {}, message: "Get error" })
     }
   });
 };
 
 const updateGioHang = async (data) => {
   return new Promise(async (resolve, reject) => {
-    try {
-      // Check exits data
-      const product = await db.GioHang.findOne({ where: { id: data?.id } });
-      if (product) {
-        await product.save();
+    // Check exits data
+    const product = await db.GioHang.findOne({ where: { id: data?.id } });
+    const danhSach = data?.danhSach;
+    for (let chiTiet of danhSach) {
+      const chiTietNew = await db.ChiTietGioHang.findOne({
+        where: {
+          id: chiTiet?.id
+        }
+      })
+      if (chiTiet.useYN == false) {
+        await chiTietNew.destroy();
         resolve({ data: product, message: "Update successfull" });
       } else {
-        resolve({ data: {}, message: "Not found account" });
+        chiTietNew.soLuong = chiTiet?.soLuong || chiTietNew?.soLuong;
+        chiTietNew.idCart = chiTietNew?.idCart;
+        chiTietNew.idSanPham = chiTietNew?.idSanPham;
+        chiTietNew.thanhTien = chiTiet?.thanhTien || chiTietNew?.thanhTien;
+        await chiTietNew.save()
+        resolve({ data: product, message: "Update successfull" });
       }
-    } catch (err) {
-      reject(err);
+    }
+    if (product) {
+      await product.save();
+    } else {
+      reject({ data: {}, message: "Not found account" });
     }
   });
 };
@@ -76,10 +112,31 @@ const deleteGioHang = async (data) => {
   });
 };
 
+// Check sản phẩm trước khi sang bước thanh toán
+const checkSanPham = async (req, res) => {
+  return new Promise(async (resolve, reject) => {
+    const { danhSach } = req.body;
+    for (let sanPham of danhSach) {
+      const check = await db.SanPham.findOne({ id: sanPham?.idSanPham });
+      if (check) {
+        if (check?.soLuong < sanPham?.soLuong) {
+          return reject({
+            message: `Sản phẩm ${check?.tenSach} chỉ còn ${check?.soLuong}, không đủ số lượng bạn cần :((`,
+          });
+        }
+      } else {
+        return reject({ message: `Sách không tồn tại` });
+      }
+    }
+    resolve({ message: "Kiểm tra hoàn tất" });
+  })
+}
+
 module.exports = {
   createNewGioHang,
   getAllGioHang,
   updateGioHang,
   deleteGioHang,
   findGioHang,
+  checkSanPham,
 };

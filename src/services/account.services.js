@@ -7,7 +7,6 @@ const sendEmail = require("../utils/sendEmail");
 
 const createNewAccount = async (data) => {
   return new Promise(async (resolve, reject) => {
-    try {
       // Check exits account
       const account = await db.TaiKhoan.findOne({
         where: {
@@ -26,7 +25,7 @@ const createNewAccount = async (data) => {
       } else {
         const hashPasswordFromBcrypt = await hashPassword(data?.matKhau);
         const gioHang = await db.GioHang.create({
-          ...data,
+          // ...data,
         });
         const dataResult = await db.TaiKhoan.create({
           ...data,
@@ -34,12 +33,10 @@ const createNewAccount = async (data) => {
           email: data?.email,
           matKhau: hashPasswordFromBcrypt,
           danhSachYeuThich: [],
+          thongTinNhanHang: [],
+          cartId: gioHang?.id
         });
         resolve({ message: "Register successfull", data: dataResult });
-      }
-    } catch (err) {
-      console.log("chạy vô 3");
-      reject({ message: err });
     }
   });
 };
@@ -75,7 +72,7 @@ const getAccountByID = async (id) => {
 const updateAccount = async (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const { id, matKhau, danhSachYeuThich, tenDangNhap, email } = data;
+      const { id, matKhau, danhSachYeuThich, tenDangNhap, email, thongTinNhanHang } = data;
       // Check exits data
       const account = await db.TaiKhoan.findOne({ where: { id: id } });
       if (account) {
@@ -87,6 +84,8 @@ const updateAccount = async (data) => {
         account.email = email || account?.email;
         account.danhSachYeuThich =
           danhSachYeuThich || account?.danhSachYeuThich;
+        account.thongTinNhanHang =
+          thongTinNhanHang || account?.thongTinNhanHang;
         await account.save();
         resolve({ data: account, message: "Update successfull" });
       } else {

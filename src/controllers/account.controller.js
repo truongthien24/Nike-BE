@@ -2,11 +2,12 @@ const AccountServices = require("../services/account.services");
 const _ = require("lodash");
 
 const registerAccount = async (req, res) => {
-  const result = await AccountServices.createNewAccount(req.body);
-  if (!_.isEmpty(result?.data)) {
+  try {
+    const result = await AccountServices.createNewAccount(req.body);
     return res.status(200).json(result);
-  } else {
-    return res.status(400).json(result);
+  }
+  catch (err) {
+    return res.status(400).json(err)
   }
 };
 
