@@ -71,6 +71,7 @@ router.get('/get-all-kichCo', kichCoController.getAllKichCo)
 // ========================= Đánh giá ============================
 router.post('/create-danhGia', danhGiaController.createDanhGia)
 router.get('/get-all-danhGia', danhGiaController.getAllDanhGia)
+router.get('/get-danhGia-byID/:id', danhGiaController.getDanhGiaByIDSanPham)
 
 
 // ========================= Đơn hàng ============================

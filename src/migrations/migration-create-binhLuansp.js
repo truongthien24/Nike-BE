@@ -1,7 +1,7 @@
 "use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("DanhGias", {
+    await queryInterface.createTable("BinhLuans", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -9,6 +9,9 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       noiDung: {
+        type: Sequelize.STRING,
+      },
+      diemDanhGia: {
         type: Sequelize.INTEGER,
       },
       idDanhGiaParent: {
@@ -23,6 +26,17 @@ module.exports = {
       idSanPham: {
         type: Sequelize.INTEGER
       },
+      danhSachTraLoi: {
+        type: Sequelize.TEXT,
+        defaultValue: [],
+        get() {
+            const rawValue = this.getDataValue("danhSachTraLoi");
+            return rawValue ? JSON.parse(rawValue) : [];
+        },
+        set(value) {
+            this.setDataValue("danhSachTraLoi", JSON.stringify(value));
+        }
+    },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -34,6 +48,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("DanhGias");
+    await queryInterface.dropTable("BinhLuans");
   },
 };

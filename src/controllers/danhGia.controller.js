@@ -3,7 +3,7 @@ const danhGiaServices = require('../services/danhGia.services');
 const createDanhGia = async (req, res) => {
     try {
         const result = await danhGiaServices.createNewDanhGia(req.body);
-        if(result) {
+        if (result) {
             return res.status(200).json(result);
         }
     } catch (err) {
@@ -14,7 +14,7 @@ const createDanhGia = async (req, res) => {
 const getAllDanhGia = async (req, res) => {
     try {
         const result = await danhGiaServices.getAllDanhGia();
-        if(result) {
+        if (result) {
             return res.status(200).json(result);
         }
     } catch (err) {
@@ -22,4 +22,15 @@ const getAllDanhGia = async (req, res) => {
     }
 }
 
-module.exports = {createDanhGia, getAllDanhGia}
+const getDanhGiaByIDSanPham = async (req, res) => {
+    try {
+        const result = await danhGiaServices.getDanhGiaByIDSanPham(req.params);
+        if (result) {
+            return res.status(200).json(result);
+        }
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+}
+
+module.exports = { createDanhGia, getAllDanhGia, getDanhGiaByIDSanPham }
