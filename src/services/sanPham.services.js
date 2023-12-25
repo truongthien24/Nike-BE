@@ -1,4 +1,5 @@
 const db = require("../models");
+const _ = require("lodash");
 const { Op } = require("sequelize");
 const { uploadToCloudinary } = require("../utils/uploadFileCloud");
 
@@ -27,15 +28,25 @@ const createNewSanPham = async (data) => {
 
       resolve({ message: "Create successfull", data: productNew });
     }
-    reject({ message: "Lôi roi" });
+    reject({ message: "Lỗi hệ thống" });
   });
 };
 
 const getAllSanPham = async () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const accounts = await db.SanPham.findAll();
-      resolve({ data: accounts, message: "Get success" });
+      const sanPhams = await db.SanPham.findAll();
+      for (let i = 0; i < sanPhams.length; i++) {
+        if (!_.isEmpty(sanPhams[i].dataValues.maKhuyenMai)) {
+          const khuyenMai = await db.KhuyenMai.findOne({
+            where: {
+              maKhuyenMai: sanPhams[i].dataValues.maKhuyenMai,
+            },
+          });
+          sanPhams[i].dataValues.khuyenMai = khuyenMai.dataValues;
+        }
+      }
+      resolve({ data: sanPhams, message: "Get success" });
     } catch (err) {
       reject(err);
     }
@@ -64,7 +75,7 @@ const findSanPham = async (data) => {
       } else if (thuongHieu || giaSanPham) {
         let fromPrice = 0;
         let toPrice = 0;
-        switch(giaSanPham) {
+        switch (giaSanPham) {
           case 1: {
             fromPrice = 0;
             toPrice = 999999;
