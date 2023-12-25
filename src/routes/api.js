@@ -7,6 +7,7 @@ const chiTietGioHangController = require("../controllers/chiTietGioHang.controll
 const kichCoController = require("../controllers/kichCo.controller");
 const danhGiaController = require("../controllers/danhGia.controller");
 const donHangController = require("../controllers/donHang.controller");
+const khuyenMaiController = require("../controllers/khuyenMai.controller");
 const { paymentOnline } = require("../utils/paymentOnline");
 
 const router = express.Router();
@@ -76,6 +77,11 @@ router.get('/get-danhGia-byID/:id', danhGiaController.getDanhGiaByIDSanPham)
 
 // ========================= Đơn hàng ============================
 router.post('/create-donHang', donHangController.createNewDonHang)
+
+
+// ========================= Giảm giá ============================
+router.post('/create-khuyenMai', khuyenMaiController.createKhuyenMai)
+router.get('/get-all-khuyenMai', khuyenMaiController.getAllKhuyenMai)
 
 
 module.exports = router;

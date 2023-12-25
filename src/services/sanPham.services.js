@@ -44,7 +44,7 @@ const getAllSanPham = async () => {
 
 const findSanPham = async (data) => {
   return new Promise(async (resolve, reject) => {
-    const { id, tenSanPham, listId } = data;
+    const { id, tenSanPham = "", listId, thuongHieu, giaSanPham } = data;
     try {
       let products;
       if (id) {
@@ -59,6 +59,36 @@ const findSanPham = async (data) => {
             id: {
               [Op.in]: listId,
             },
+          },
+        });
+      } else if (thuongHieu || giaSanPham) {
+        let fromPrice = 0;
+        let toPrice = 0;
+        switch(giaSanPham) {
+          case 1: {
+            fromPrice = 0;
+            toPrice = 999999;
+            break;
+          }
+          case 2: {
+            fromPrice = 1000000;
+            toPrice = 2000000;
+            break;
+          }
+          case 3: {
+            fromPrice = 3000000;
+            toPrice = 50000000;
+            break;
+          }
+        }
+        products = await db.SanPham.findAll({
+          where: {
+            giaSanPham: {
+              [Op.between]: [fromPrice, toPrice],
+            },
+            // thuongHieu: {
+            //   [Op.in]: thuongHieu,
+            // },
           },
         });
       } else {
@@ -79,13 +109,26 @@ const findSanPham = async (data) => {
 
 const updateSanPham = async (data) => {
   return new Promise(async (resolve, reject) => {
-    const { tenSanPham, maThuongHieu, maMauSac, maKichCo, maKhuyenMai, hinhAnh, giaSanPham, soLuong, moTa, noiDung, trangThai, id } = data;
+    const {
+      tenSanPham,
+      maThuongHieu,
+      maMauSac,
+      maKichCo,
+      maKhuyenMai,
+      hinhAnh,
+      giaSanPham,
+      soLuong,
+      moTa,
+      noiDung,
+      trangThai,
+      id,
+    } = data;
     try {
       // Check exits data
       const product = await db.SanPham.findOne({ where: { id: id } });
       if (product) {
         let image = product?.hinhAnh;
-        if(hinhAnh?.reupload) {
+        if (hinhAnh?.reupload) {
           image = await uploadToCloudinary(hinhAnh?.file, "sanPham");
         }
         product.tenSanPham = tenSanPham || product?.tenSanPham;
@@ -98,8 +141,7 @@ const updateSanPham = async (data) => {
         product.soLuong = soLuong || product.soLuong;
         product.moTa = moTa || product?.moTa;
         product.trangThai = trangThai || product?.trangThai;
-        product.noiDung =
-          noiDung || product?.noiDung;
+        product.noiDung = noiDung || product?.noiDung;
         await product.save();
         resolve({ data: product, message: "Update successfull" });
       } else {

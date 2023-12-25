@@ -6,10 +6,8 @@ const createSanPham = async (req, res) => {
     const result = await ProductServices.createNewSanPham(req.body);
     return res.status(200).json(result);
   } catch (err) {
-
     return res.status(400).json(err);
   }
-
 };
 
 const getAllSanPham = async (req, res) => {
@@ -29,7 +27,7 @@ const updateSanPham = async (req, res) => {
 const findSanPham = async (req, res) => {
   const result = await ProductServices.findSanPham(req.body);
   return res.status(200).json(result);
-}
+};
 
 const deleteSanPham = async (req, res) => {
   const result = await ProductServices.deleteSanPham(req.params);

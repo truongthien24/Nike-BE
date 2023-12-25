@@ -9,7 +9,7 @@ const paymentOnline = async (request, response) => {
   const secretkey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
   const requestId = partnerCode + new Date().getTime();
   const orderId = requestId;
-  const orderInfo = "Thanh toán Black&Cat Store";
+  const orderInfo = "Thanh toán DN-Store";
   const redirectUrl = "https://momo.vn/return";
   const ipnUrl = "https://callback.url/notify";
   const amount = request.body.tongTien;
