@@ -3,6 +3,9 @@ const handlebars = require("handlebars");
 const fs = require("fs");
 
 module.exports = async (email, subject, data) => {
+  console.log("email", email)
+  console.log("subject", subject)
+  console.log("data", data)
   try {
     // Tạo transporter
     const transporter = nodemailer.createTransport({
@@ -33,7 +36,7 @@ module.exports = async (email, subject, data) => {
       attachments: [
         {
           filename: "logo.png",
-          path: `${__dirname}/image/logo.png`,
+          path: `${__dirname}/image/nike-logo.png`,
           cid: "logo",
         },
       ],

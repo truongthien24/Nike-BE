@@ -180,6 +180,7 @@ const deleteSanPham = async (data) => {
       // Check exits data
       const account = await db.SanPham.findOne({ where: { id: data?.id } });
       if (account) {
+        // Check sản phẩm có đang trong giỏ hàng hay không 
         await account.destroy();
         resolve({ data: {}, message: "Delete successfull" });
       } else {

@@ -15,9 +15,9 @@
     <div style="width: 100vw">
         {{#each danhSach}}
         <div style="margin: 10px; width: 100%; display: flex; justify-content: space-between;">
-            <img src="{{this.sach.hinhAnh.url}}" style="width: 70px; height: 100%; margin-right: 10px"/>
+            <img src="{{this.sanPham.hinhAnh}}" style="width: 70px; height: 100%; margin-right: 10px"/>
             <div>
-                <p style="margin: 0 0 10px 0; font-weight: bold; font-size: 13px">{{ this.sach.tenSach }}</p>
+                <p style="margin: 0 0 10px 0; font-weight: bold; font-size: 13px">{{ this.sanPham.tenSanPham }}</p>
                 <span style="margin-left: 10px;">SL: {{this.soLuong}}</span>
             </div>
         </div>
@@ -26,7 +26,7 @@
     <p>Tổng giá: {{tongGia}}VND</p>
 
 
-    <img src="cid:logo" />
+    <img src="cid:logo" style="width: 100vw"/>
 </body>
 
 </html>

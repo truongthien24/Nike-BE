@@ -32,11 +32,11 @@ module.exports = {
                 type: Sequelize.TEXT,
                 defaultValue: {},
                 get() {
-                    const rawValue = this.getDataValue("thongTinGiaoHang");
+                    const rawValue = this.getDataValue("thongTinThanhToan");
                     return rawValue ? JSON.parse(rawValue) : {};
                 },
                 set(value) {
-                    this.setDataValue("thongTinGiaoHang", JSON.stringify(value));
+                    this.setDataValue("thongTinThanhToan", JSON.stringify(value));
                 }
             },
             tongGia: {
@@ -49,7 +49,7 @@ module.exports = {
                 type: Sequelize.INTEGER
             },
             tinhTrang: {
-                type: Sequelize.BOOLEAN
+                type: Sequelize.INTEGER
             },
             createdAt: {
                 allowNull: false,

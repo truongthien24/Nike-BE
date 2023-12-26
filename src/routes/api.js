@@ -8,6 +8,8 @@ const kichCoController = require("../controllers/kichCo.controller");
 const danhGiaController = require("../controllers/danhGia.controller");
 const donHangController = require("../controllers/donHang.controller");
 const khuyenMaiController = require("../controllers/khuyenMai.controller");
+const bannerController = require("../controllers/banner.controller");
+const thuongHieuController = require("../controllers/thuongHieu.controller");
 const { paymentOnline } = require("../utils/paymentOnline");
 
 const router = express.Router();
@@ -77,11 +79,26 @@ router.get('/get-danhGia-byID/:id', danhGiaController.getDanhGiaByIDSanPham)
 
 // ========================= Đơn hàng ============================
 router.post('/create-donHang', donHangController.createNewDonHang)
+router.get('/get-donHang-byIdDUser/:id', donHangController.getDonHangByIdUser)
 
 
-// ========================= Giảm giá ============================
+// ========================= Khuyến mãi ============================
 router.post('/create-khuyenMai', khuyenMaiController.createKhuyenMai)
 router.get('/get-all-khuyenMai', khuyenMaiController.getAllKhuyenMai)
+
+// ========================= Banner ============================
+router.post('/create-banner', bannerController.createBanner)
+router.get('/get-all-banner', bannerController.getAllBanner)
+router.get('/get-banner-byID/:id', bannerController.getBannerByID)
+router.patch('/update-banner', bannerController.updateBanner)
+router.delete('/delete-banner/:id', bannerController.deleteBanner)
+
+// ========================= Thương hiệu ============================
+router.post('/create-thuongHieu', thuongHieuController.createThuongHieu)
+router.get('/get-all-thuongHieu', thuongHieuController.getAllThuongHieu)
+router.get('/get-thuongHieu-byID/:id', thuongHieuController.getBannerByID)
+router.patch('/update-thuongHieu', thuongHieuController.updateBanner)
+router.delete('/delete-thuongHieu/:id', thuongHieuController.deleteBanner)
 
 
 module.exports = router;

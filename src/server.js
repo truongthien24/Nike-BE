@@ -17,8 +17,8 @@ const hostname = process.env.HOST_NAME;
 // app.use(express.json()); // for json
 // app.use(express.urlencoded({ extended: true })); // for form data
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true })); // for form data
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" })); // for form data
 
 // Config template engine
 configViewEngie(app);
@@ -28,13 +28,12 @@ configViewEngie(app);
 app.use(cors({ origin: true }));
 
 // Kết nối DB
-connectDB()
+connectDB();
 
 // Khai báo route
 app.use("/api", apiRoute);
 
-
 app.listen(port, hostname, () => {
   console.log(`Server running at port ${port}`);
-  swaggerDocs(app, port)
+  swaggerDocs(app, port);
 });
