@@ -17,15 +17,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.TEXT
             },
             danhSach: {
-                type: DataTypes.TEXT,
-                defaultValue: [],
-                get() {
-                    const rawValue = this.getDataValue("danhSach");
-                    return rawValue ? JSON.parse(rawValue) : [];
-                },
-                set(value) {
-                    this.setDataValue("danhSach", JSON.stringify(value));
-                }
+                type: DataTypes.JSON,
             },
             ngayTaoDon: {
                 type: DataTypes.TEXT

@@ -1,4 +1,5 @@
 const db = require("../models");
+const sendEmailPaymentSuccess = require("../utils/sendEmailPaymentSuccess");
 
 const createNewDonHang = (data) => {
     const { userId,
@@ -28,7 +29,7 @@ const createNewDonHang = (data) => {
             thongTinThanhToan,
             tongGia,
             maDonHang: maDon,
-            loTrinhDonHang: "",
+            loTrinhDonHang: 0,
             tinhTrang: 0,
         });
 
@@ -37,15 +38,16 @@ const createNewDonHang = (data) => {
             for (let sanPham of danhSach) {
                 const sachResult = await db.SanPham.findOne({ id: sanPham?.sanPham?.id });
                 if (sachResult) {
-                    const soLuongNew = sachResult?.soLuong - sanPham?.soLuong;
-                    await db.SanPham.findOneAndUpdate({ id: sanPham?.sanPham?.id }, { soLuong: soLuongNew })
+                    const soLuongNew = sachResult?.dataValues.soLuong - sanPham?.soLuong;
+                    const sanPhamNew = await db.SanPham.findOne({ id: sanPham?.sanPham?.id })
+                    sanPhamNew.soLuong = soLuongNew;
+                    await sanPhamNew.save();
                 } else {
                     reject({ message: 'Sản phẩm khong ton tai' })
                 }
             }
-            await db.GioHang.findOneAndUpdate(
-                { id: gioHangId },
-                { danhSach: [], tongGia: 0 }
+            await db.ChiTietGioHang.destroy(
+                { where: { idCart: gioHangId } },
             );
             resolve({ message: "Hoàn tất", data: donHang });
         } else {

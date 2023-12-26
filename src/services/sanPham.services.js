@@ -87,7 +87,7 @@ const findSanPham = async (data) => {
             break;
           }
           case 3: {
-            fromPrice = 3000000;
+            fromPrice = 2000001;
             toPrice = 50000000;
             break;
           }
@@ -110,6 +110,16 @@ const findSanPham = async (data) => {
             },
           },
         });
+      }
+      for (let i = 0; i < products.length; i++) {
+        if (!_.isEmpty(products[i].dataValues.maKhuyenMai)) {
+          const khuyenMai = await db.KhuyenMai.findOne({
+            where: {
+              maKhuyenMai: products[i].dataValues.maKhuyenMai,
+            },
+          });
+          products[i].dataValues.khuyenMai = khuyenMai.dataValues;
+        }
       }
       resolve({ data: products, message: "Get success" });
     } catch (err) {
