@@ -12,7 +12,7 @@ module.exports = {
         type: Sequelize.TEXT,
       },
       moTaThuongHieu: {
-        type: Sequelize.TEXT,
+        type: Sequelize.STRING,
       },
       tinhTrang: {
         type: Sequelize.INTEGER,
