@@ -14,6 +14,9 @@ module.exports = {
       matKhau: {
         type: Sequelize.STRING,
       },
+      loaiTaiKhoan: {
+        type: Sequelize.STRING,
+      },
       email: {
         type: Sequelize.STRING,
       },
@@ -22,6 +25,28 @@ module.exports = {
       },
       infoPayment: {
         type: Sequelize.STRING,
+      },
+      danhSachYeuThich: {
+        type: Sequelize.TEXT,
+        defaultValue: [],
+        get() {
+          const rawValue = this.getDataValue("danhSachYeuThich");
+          return rawValue ? JSON.parse(rawValue) : [];
+        },
+        set(value) {
+          this.setDataValue("danhSachYeuThich", JSON.stringify(value));
+        }
+      },
+      thongTinNhanHang: {
+        type: Sequelize.TEXT,
+        defaultValue: [],
+        get() {
+          const rawValue = this.getDataValue("thongTinNhanHang");
+          return rawValue ? JSON.parse(rawValue) : [];
+        },
+        set(value) {
+          this.setDataValue("thongTinNhanHang", JSON.stringify(value));
+        }
       },
       createdAt: {
         allowNull: false,

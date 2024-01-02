@@ -7,36 +7,37 @@ const sendEmail = require("../utils/sendEmail");
 
 const createNewAccount = async (data) => {
   return new Promise(async (resolve, reject) => {
-      // Check exits account
-      const account = await db.TaiKhoan.findOne({
-        where: {
-          [Op.or]: [
-            {
-              tenDangNhap: data?.tenDangNhap,
-            },
-            {
-              email: data?.email,
-            },
-          ],
-        },
+    // Check exits account
+    const account = await db.TaiKhoan.findOne({
+      where: {
+        [Op.or]: [
+          {
+            tenDangNhap: data?.tenDangNhap,
+          },
+          {
+            email: data?.email,
+          },
+        ],
+      },
+    });
+    if (account) {
+      resolve({ message: "Already username or email !", data: {} });
+    } else {
+      const hashPasswordFromBcrypt = await hashPassword(data?.matKhau);
+      const gioHang = await db.GioHang.create({
+        // ...data,
       });
-      if (account) {
-        resolve({ message: "Already username or email !", data: {} });
-      } else {
-        const hashPasswordFromBcrypt = await hashPassword(data?.matKhau);
-        const gioHang = await db.GioHang.create({
-          // ...data,
-        });
-        const dataResult = await db.TaiKhoan.create({
-          ...data,
-          tenDangNhap: data?.tenDangNhap,
-          email: data?.email,
-          matKhau: hashPasswordFromBcrypt,
-          danhSachYeuThich: [],
-          thongTinNhanHang: [],
-          cartId: gioHang?.id
-        });
-        resolve({ message: "Register successfull", data: dataResult });
+      const dataResult = await db.TaiKhoan.create({
+        ...data,
+        tenDangNhap: data?.tenDangNhap,
+        email: data?.email,
+        matKhau: hashPasswordFromBcrypt,
+        danhSachYeuThich: [],
+        thongTinNhanHang: [],
+        cartId: gioHang?.id,
+        loaiTaiKhoan: data?.loaiTaiKhoan,
+      });
+      resolve({ message: "Register successfull", data: dataResult });
     }
   });
 };
@@ -72,7 +73,14 @@ const getAccountByID = async (id) => {
 const updateAccount = async (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const { id, matKhau, danhSachYeuThich, tenDangNhap, email, thongTinNhanHang } = data;
+      const {
+        id,
+        matKhau,
+        danhSachYeuThich,
+        tenDangNhap,
+        email,
+        thongTinNhanHang,
+      } = data;
       // Check exits data
       const account = await db.TaiKhoan.findOne({ where: { id: id } });
       if (account) {
@@ -170,6 +178,62 @@ const login = async (data) => {
   });
 };
 
+const loginAdmin = async (data) => {
+  return new Promise(async (resolve, reject) => {
+      // check exits data
+      const account = await db.TaiKhoan.findOne({
+        where: { tenDangNhap: data?.tenDangNhap },
+        raw: true,
+        // attributes: {
+        //   include: ["email", "userName", "password"],
+        // },
+      });
+      if (account) {
+        const checkPassword = await bcrypt.compareSync(
+          data?.matKhau,
+          account?.matKhau
+        );
+        if (checkPassword) {
+          // Đăng ký token
+          if (account.loaiTaiKhoan == "admin") {
+            const token = jwt.sign(
+              {
+                account: {
+                  ...account,
+                },
+              },
+              "jwtSecretKey",
+              {
+                expiresIn: 300,
+              }
+            );
+            // Thành công trả về status 200 và message
+            delete account.matKhau;
+            resolve({
+              token,
+              data: account,
+              message: "Login sucess!",
+            });
+          } else {
+            reject({ message: "Tài khoản không được cấp quyền" });
+          }
+        } else {
+          // Mật khẩu không chính xác
+          resolve({
+            data: null,
+            message: "Password incorect!",
+          });
+        }
+      } else {
+        // Không tìm thấy account
+        resolve({
+          data: null,
+          message: "Not found account!",
+        });
+      }
+  });
+};
+
 const forgetPassword = async (data) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -222,4 +286,5 @@ module.exports = {
   login,
   getAccountByID,
   forgetPassword,
+  loginAdmin,
 };

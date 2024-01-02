@@ -5,9 +5,8 @@ const registerAccount = async (req, res) => {
   try {
     const result = await AccountServices.createNewAccount(req.body);
     return res.status(200).json(result);
-  }
-  catch (err) {
-    return res.status(400).json(err)
+  } catch (err) {
+    return res.status(400).json(err);
   }
 };
 
@@ -53,6 +52,17 @@ const login = async (req, res) => {
   }
 };
 
+const loginAdmin = async (req, res) => {
+  try {
+    const result = await AccountServices.loginAdmin(req.body);
+    if (result) {
+      return res.status(200).json(result);
+    }
+  } catch (err) {
+    return res.status(400).json(err);
+  }
+};
+
 const forgetPassword = async (req, res) => {
   const result = await AccountServices.forgetPassword(req.body);
   if (result?.data) {
@@ -60,7 +70,7 @@ const forgetPassword = async (req, res) => {
   } else {
     return res.status(400).json(result);
   }
-}
+};
 
 module.exports = {
   registerAccount,
@@ -70,4 +80,5 @@ module.exports = {
   login,
   getAccountByID,
   forgetPassword,
+  loginAdmin,
 };

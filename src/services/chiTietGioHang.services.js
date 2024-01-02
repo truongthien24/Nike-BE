@@ -6,6 +6,7 @@ const createChiTietGioHang = (data) => {
         // Check san pham da ton tai khong gio hang chua
         const exitsSanPham = await db.ChiTietGioHang.findOne({
             where: {
+                idCart: idCart,
                 idSanPham: idSanPham
             }
         })
@@ -13,7 +14,7 @@ const createChiTietGioHang = (data) => {
         if (exitsSanPham) {
             // Cong so luong len
             exitsSanPham.soLuong = exitsSanPham.soLuong + 1;
-            exitsSanPham.idCart = exitsSanPham?.idCart;
+            exitsSanPham.idCart = idCart;
             exitsSanPham.idSanPham = exitsSanPham?.idSanPham;
             exitsSanPham.thanhTien = exitsSanPham?.thanhTien + thanhTien;
             await exitsSanPham.save();

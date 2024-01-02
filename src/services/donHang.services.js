@@ -36,7 +36,7 @@ const createNewDonHang = (data) => {
     });
 
     if (donHang) {
-      await sendEmailPaymentSuccess("DH51801881@student.stu.edu.vn", "Đặt hàng thành công", {
+      await sendEmailPaymentSuccess(email, "Đặt hàng thành công", {
         userId,
         danhSach: danhSachThue,
         ngayTaoDon: new Date().toString(),
