@@ -91,15 +91,21 @@ const findSanPham = async (data) => {
             toPrice = 50000000;
             break;
           }
+          default: {
+            fromPrice = 0;
+            toPrice = 5000000000000;
+          }
         }
         products = await db.SanPham.findAll({
           where: {
             giaSanPham: {
               [Op.between]: [fromPrice, toPrice],
             },
-            // thuongHieu: {
-            //   [Op.in]: thuongHieu,
-            // },
+            ...(thuongHieu?.length > 0 && {
+              maThuongHieu: {
+                [Op.in]: thuongHieu,
+              },
+            }),
           },
         });
       } else {
@@ -180,6 +186,7 @@ const deleteSanPham = async (data) => {
       // Check exits data
       const account = await db.SanPham.findOne({ where: { id: data?.id } });
       if (account) {
+        // Check sản phẩm có đang trong giỏ hàng hay không
         await account.destroy();
         resolve({ data: {}, message: "Delete successfull" });
       } else {

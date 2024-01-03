@@ -33,6 +33,8 @@ router.delete("/delete-account", accountController.deleteAccount);
 
 router.post("/login", accountController.login);
 
+router.post("/login-admin", accountController.loginAdmin)
+
 
 
 

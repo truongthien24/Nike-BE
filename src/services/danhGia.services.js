@@ -47,14 +47,14 @@ const getDanhGiaByIDSanPham = (data) => {
         for (let i = 0; i < danhGias.length; i++) {
             const taiKhoan = await db.TaiKhoan.findOne({
                 where: {
-                    id: danhGias[i].dataValues.idUser,
+                    id: danhGias[i].dataValues?.idUser,
                 }
             })
-            danhGias[i].dataValues.taiKhoan = taiKhoan.dataValues;
+            danhGias[i].dataValues.taiKhoan = taiKhoan?.dataValues;
         }
         let resultDanhGias = danhGias?.filter((danhGia) => danhGia.dataValues.idDanhGiaParent);
         let resultDanhGiasFather = danhGias
-            ?.filter((danhGia) => !danhGia.dataValues.idDanhGiaParent)
+            ?.filter((danhGia) => !danhGia.dataValues?.idDanhGiaParent)
             .map((dg) => {
                 return { ...dg.dataValues, danhSachTraLoi: [] };
             });
