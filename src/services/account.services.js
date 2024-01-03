@@ -6,22 +6,41 @@ const jwt = require("jsonwebtoken");
 const sendEmail = require("../utils/sendEmail");
 
 const createNewAccount = async (data) => {
+  const { loaiTaiKhoan } = data;
   return new Promise(async (resolve, reject) => {
-    // Check exits account
-    const account = await db.TaiKhoan.findOne({
-      where: {
-        [Op.or]: [
-          {
-            tenDangNhap: data?.tenDangNhap,
-          },
-          {
-            email: data?.email,
-          },
-        ],
-      },
-    });
-    if (account) {
-      resolve({ message: "Already username or email !", data: {} });
+    if (loaiTaiKhoan === "user") {
+      // Check exits account
+      const account = await db.TaiKhoan.findOne({
+        where: {
+          [Op.or]: [
+            {
+              tenDangNhap: data?.tenDangNhap,
+            },
+            {
+              email: data?.email,
+            },
+          ],
+        },
+      });
+      if (account) {
+        reject({ message: "Already username or email !", data: {} });
+      } else {
+        const hashPasswordFromBcrypt = await hashPassword(data?.matKhau);
+        const gioHang = await db.GioHang.create({
+          // ...data,
+        });
+        const dataResult = await db.TaiKhoan.create({
+          ...data,
+          tenDangNhap: data?.tenDangNhap,
+          email: data?.email,
+          matKhau: hashPasswordFromBcrypt,
+          danhSachYeuThich: [],
+          thongTinNhanHang: [],
+          cartId: gioHang?.id,
+          loaiTaiKhoan: data?.loaiTaiKhoan,
+        });
+        resolve({ message: "Register successfull", data: dataResult });
+      }
     } else {
       const hashPasswordFromBcrypt = await hashPassword(data?.matKhau);
       const gioHang = await db.GioHang.create({
@@ -180,57 +199,57 @@ const login = async (data) => {
 
 const loginAdmin = async (data) => {
   return new Promise(async (resolve, reject) => {
-      // check exits data
-      const account = await db.TaiKhoan.findOne({
-        where: { tenDangNhap: data?.tenDangNhap },
-        raw: true,
-        // attributes: {
-        //   include: ["email", "userName", "password"],
-        // },
-      });
-      if (account) {
-        const checkPassword = await bcrypt.compareSync(
-          data?.matKhau,
-          account?.matKhau
-        );
-        if (checkPassword) {
-          // Đăng ký token
-          if (account.loaiTaiKhoan == "admin") {
-            const token = jwt.sign(
-              {
-                account: {
-                  ...account,
-                },
+    // check exits data
+    const account = await db.TaiKhoan.findOne({
+      where: { tenDangNhap: data?.tenDangNhap },
+      raw: true,
+      // attributes: {
+      //   include: ["email", "userName", "password"],
+      // },
+    });
+    if (account) {
+      const checkPassword = await bcrypt.compareSync(
+        data?.matKhau,
+        account?.matKhau
+      );
+      if (checkPassword) {
+        // Đăng ký token
+        if (account.loaiTaiKhoan == "admin") {
+          const token = jwt.sign(
+            {
+              account: {
+                ...account,
               },
-              "jwtSecretKey",
-              {
-                expiresIn: 300,
-              }
-            );
-            // Thành công trả về status 200 và message
-            delete account.matKhau;
-            resolve({
-              token,
-              data: account,
-              message: "Login sucess!",
-            });
-          } else {
-            reject({ message: "Tài khoản không được cấp quyền" });
-          }
-        } else {
-          // Mật khẩu không chính xác
+            },
+            "jwtSecretKey",
+            {
+              expiresIn: 300,
+            }
+          );
+          // Thành công trả về status 200 và message
+          delete account.matKhau;
           resolve({
-            data: null,
-            message: "Password incorect!",
+            token,
+            data: account,
+            message: "Login sucess!",
           });
+        } else {
+          reject({ message: "Tài khoản không được cấp quyền" });
         }
       } else {
-        // Không tìm thấy account
+        // Mật khẩu không chính xác
         resolve({
           data: null,
-          message: "Not found account!",
+          message: "Password incorect!",
         });
       }
+    } else {
+      // Không tìm thấy account
+      reject({
+        data: null,
+        message: "Not found account!",
+      });
+    }
   });
 };
 
@@ -278,6 +297,36 @@ const forgetPassword = async (data) => {
   });
 };
 
+const changePassword = async (data) => {
+  return new Promise(async (resolve, reject) => {
+    const { id, matKhauHienTai, matKhauMoi } = data;
+    const taiKhoan = await db.TaiKhoan.findOne({ where: {id: id} });
+    const checkPassword = await bcrypt.compareSync(
+      matKhauHienTai,
+      taiKhoan?.matKhau
+    );
+    if (checkPassword) {
+      if (!bcrypt.compareSync(matKhauMoi, taiKhoan?.matKhau)) {
+        const hashPasswordFromBcrypt = await hashPassword(matKhauMoi);
+        const updateAccount = await db.TaiKhoan.findOne(
+          { where: { id: id } }
+        );
+        if (updateAccount) {
+          updateAccount.matKhau = hashPasswordFromBcrypt;
+          await updateAccount.save();
+          resolve({ message: "Mật khẩu đã được cập nhật" });
+        } else {
+          reject({ message: "Cập nhật không thành công" });
+        }
+      } else {
+       reject({ message: "Trùng với mật khẩu hiện tại" });
+      }
+    } else {
+      reject({ message: "Mật khẩu hiện tại không chính xác" });
+    }
+  })
+}
+
 module.exports = {
   createNewAccount,
   getAllAccount,
@@ -287,4 +336,5 @@ module.exports = {
   getAccountByID,
   forgetPassword,
   loginAdmin,
+  changePassword,
 };

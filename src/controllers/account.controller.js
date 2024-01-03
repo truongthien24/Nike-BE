@@ -72,6 +72,18 @@ const forgetPassword = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  try {
+    const result = await AccountServices.changePassword(req.body);
+    if (result) {
+      return res.status(200).json(result);
+    } 
+  } catch (err) {
+    return res.status(400).json(err);
+  }
+};
+
+
 module.exports = {
   registerAccount,
   getAllAccount,
@@ -81,4 +93,5 @@ module.exports = {
   getAccountByID,
   forgetPassword,
   loginAdmin,
+  changePassword,
 };

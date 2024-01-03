@@ -35,7 +35,7 @@ router.post("/login", accountController.login);
 
 router.post("/login-admin", accountController.loginAdmin)
 
-
+router.post("/change-password", accountController.changePassword)
 
 
 // ======================= Product ===============================
@@ -81,6 +81,7 @@ router.get('/get-danhGia-byID/:id', danhGiaController.getDanhGiaByIDSanPham)
 
 // ========================= Đơn hàng ============================
 router.post('/create-donHang', donHangController.createNewDonHang)
+router.patch('/update-donHang/:id', donHangController.updateDonHang)
 router.get('/get-donHang-byIdDUser/:id', donHangController.getDonHangByIdUser)
 
 

@@ -37,13 +37,13 @@ const getAllSanPham = async () => {
     try {
       const sanPhams = await db.SanPham.findAll();
       for (let i = 0; i < sanPhams.length; i++) {
-        if (!_.isEmpty(sanPhams[i].dataValues.maKhuyenMai)) {
+        if (!_.isEmpty(sanPhams[i].dataValues?.maKhuyenMai)) {
           const khuyenMai = await db.KhuyenMai.findOne({
             where: {
-              maKhuyenMai: sanPhams[i].dataValues.maKhuyenMai,
+              maKhuyenMai: sanPhams[i].dataValues?.maKhuyenMai,
             },
           });
-          sanPhams[i].dataValues.khuyenMai = khuyenMai.dataValues;
+          sanPhams[i].dataValues.khuyenMai = khuyenMai?.dataValues;
         }
       }
       resolve({ data: sanPhams, message: "Get success" });
@@ -121,10 +121,10 @@ const findSanPham = async (data) => {
         if (!_.isEmpty(products[i].dataValues.maKhuyenMai)) {
           const khuyenMai = await db.KhuyenMai.findOne({
             where: {
-              maKhuyenMai: products[i].dataValues.maKhuyenMai,
+              maKhuyenMai: products[i].dataValues?.maKhuyenMai,
             },
           });
-          products[i].dataValues.khuyenMai = khuyenMai.dataValues;
+          products[i].dataValues.khuyenMai = khuyenMai?.dataValues;
         }
       }
       resolve({ data: products, message: "Get success" });

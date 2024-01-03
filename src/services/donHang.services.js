@@ -86,4 +86,43 @@ const getDonHangByIdUser = (data) => {
   });
 };
 
-module.exports = { createNewDonHang, getDonHangByIdUser };
+const updateDonHang = (data) => {
+  const { id, loTrinhDonHang, maDonHang, ngayTaoDon, thongTinGiaoHang, thongTinThanhToan, tinhTrang, tongGia, userId, danhSach } = data;
+  // Check exits data
+  return new Promise(async (resolve, reject) => {
+    const donHang = await db.DonHang.findOne({ where: { id: id } });
+    if (donHang) {
+      donHang.loTrinhDonHang = loTrinhDonHang || donHang?.loTrinhDonHang;
+      donHang.maDonHang = maDonHang || donHang.maDonHang;
+      donHang.ngayTaoDon = ngayTaoDon || donHang.ngayTaoDon;
+      donHang.thongTinGiaoHang = thongTinGiaoHang || donHang?.thongTinGiaoHang;
+      donHang.thongTinThanhToan = thongTinThanhToan || donHang?.thongTinThanhToan;
+      donHang.tinhTrang = tinhTrang || donHang?.tinhTrang;
+      donHang.tongGia = tongGia || donHang?.tongGia;
+      donHang.userId = userId || donHang?.userId;
+      if(tinhTrang === 4) {
+        for (let sanPham of danhSach) {
+          const sachResult = await db.SanPham.findOne({
+            id: sanPham?.sanPham?.id,
+          });
+          if (sachResult) {
+            const soLuongNew = sachResult?.dataValues.soLuong + sanPham?.soLuong;
+            const sanPhamNew = await db.SanPham.findOne({
+              id: sanPham?.sanPham?.id,
+            });
+            sanPhamNew.soLuong = soLuongNew;
+            await sanPhamNew.save();
+          } else {
+            reject({ message: "Sản phẩm khong ton tai" });
+          }
+        }
+      }
+      await donHang.save();
+      resolve({ data: donHang, message: "Update successfull" });
+    } else {
+      reject({ data: {}, message: "Not found banner" });
+    }
+  });
+};
+
+module.exports = { createNewDonHang, getDonHangByIdUser, updateDonHang };
