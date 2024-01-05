@@ -56,9 +56,9 @@ const updateBanner = (data) => {
       if (reuploadImage) {
         image = await uploadToCloudinary(hinhAnh, "banner");
       }
-      banner.tenBanner = tenBanner || product?.tenBanner;
-      banner.moTaBanner = moTaBanner || product.moTaBanner;
-      banner.hinhAnh = image?.url || product.hinhAnh;
+      banner.tenBanner = tenBanner || banner?.tenBanner;
+      banner.moTaBanner = moTaBanner || banner.moTaBanner;
+      banner.hinhAnh = image?.url || banner.hinhAnh;
       banner.tinhTrang = tinhTrang || banner?.tinhTrang;
       await banner.save();
       resolve({ data: banner, message: "Update successfull" });

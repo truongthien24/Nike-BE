@@ -42,7 +42,9 @@ const getAllDanhGia = () => {
 
 const getDanhGiaByIDSanPham = (data) => {
   return new Promise(async (resolve, reject) => {
-    let danhGias = await db.BinhLuan.findAll({ idSanPham: data?.idSanPham });
+    let danhGias = await db.BinhLuan.findAll({
+      where: { idSanPham: parseInt(data?.id) },
+    });
     for (let i = 0; i < danhGias.length; i++) {
       const taiKhoan = await db.TaiKhoan.findOne({
         where: {
@@ -93,6 +95,27 @@ const getDanhGiaByIDSanPham = (data) => {
   });
 };
 
+const updateDanhGia = async (data) => {
+  const { diemDanhGia, noiDung, id } = data;
+  return new Promise(async (resolve, reject) => {
+    // Check exits data
+    const danhGia = await db.BinhLuan.findOne({ where: { id: id } });
+    if (danhGia) {
+      danhGia.diemDanhGia = diemDanhGia || danhGia?.diemDanhGia;
+      danhGia.noiDung = noiDung || danhGia?.noiDung;
+      danhGia.idDanhGiaParent = danhGia?.idDanhGiaParent;
+      danhGia.ngayTao = danhGia?.ngayTao;
+      danhGia.idUser = danhGia.idUser;
+      danhGia.idSanPham = danhGia.idSanPham;
+      danhGia.danhSachTraLoi = danhGia?.danhSachTraLoi;
+      await danhGia.save();
+      resolve({ data: {}, message: "Update successfull" });
+    } else {
+      reject({ data: null, message: "Not found comment" });
+    }
+  });
+};
+
 const deleteDanhGia = async (data) => {
   return new Promise(async (resolve, reject) => {
     // Check exits data
@@ -101,9 +124,15 @@ const deleteDanhGia = async (data) => {
       await danhGia.destroy();
       resolve({ data: {}, message: "Delete successfull" });
     } else {
-      resolve({ data: null, message: "Not found account" });
+      resolve({ data: null, message: "Not found comment" });
     }
   });
 };
 
-module.exports = { createNewDanhGia, getAllDanhGia, getDanhGiaByIDSanPham, deleteDanhGia };
+module.exports = {
+  createNewDanhGia,
+  getAllDanhGia,
+  getDanhGiaByIDSanPham,
+  updateDanhGia,
+  deleteDanhGia,
+};

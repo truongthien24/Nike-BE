@@ -33,6 +33,17 @@ const getDanhGiaByIDSanPham = async (req, res) => {
   }
 };
 
+const updateDanhGia = async (req, res) => {
+  try {
+    const result = await danhGiaServices.updateDanhGia({...req.body, ...req.params});
+    if (result) {
+      return res.status(200).json(result);
+    }
+  } catch (err) {
+    return res.status(400).json(err);
+  }
+};
+
 const deleteDanhGia = async (req, res) => {
   try {
     const result = await danhGiaServices.deleteDanhGia(req.params);
@@ -48,5 +59,6 @@ module.exports = {
   createDanhGia,
   getAllDanhGia,
   getDanhGiaByIDSanPham,
+  updateDanhGia,
   deleteDanhGia,
 };
