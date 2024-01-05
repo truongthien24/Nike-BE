@@ -46,7 +46,13 @@ const findGioHang = async (data) => {
             id: chiTietGioHang[i].dataValues.idSanPham,
           }
         })
-        chiTietGioHang[i].dataValues.sanPham = sanPham.dataValues;
+        const khuyenMai = sanPham?.dataValues?.maKhuyenMai && await db.KhuyenMai.findOne({
+          where: {
+            maKhuyenMai: sanPham?.dataValues?.maKhuyenMai,
+          }
+        });
+        chiTietGioHang[i].dataValues.sanPham = sanPham?.dataValues;
+        chiTietGioHang[i].dataValues.sanPham.khuyenMai = khuyenMai?.dataValues;
         tongGia += chiTietGioHang[i].dataValues.thanhTien;
       }
       if (chiTietGioHang) {
