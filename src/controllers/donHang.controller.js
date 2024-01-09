@@ -33,4 +33,15 @@ const updateDonHang = async (req, res) => {
   }
 };
 
-module.exports = { createNewDonHang, getDonHangByIdUser, updateDonHang };
+const getAllDonHang = async (req, res) => {
+  try {
+    const result = await donHangServices.getAllDonHang(req?.body);
+    if (result) {
+      return res.status(200).json(result);
+    }
+  } catch (err) {
+    return res.status(400).json(err);
+  }
+};
+
+module.exports = { createNewDonHang, getDonHangByIdUser, updateDonHang, getAllDonHang };

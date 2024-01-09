@@ -87,7 +87,18 @@ const getDonHangByIdUser = (data) => {
 };
 
 const updateDonHang = (data) => {
-  const { id, loTrinhDonHang, maDonHang, ngayTaoDon, thongTinGiaoHang, thongTinThanhToan, tinhTrang, tongGia, userId, danhSach } = data;
+  const {
+    id,
+    loTrinhDonHang,
+    maDonHang,
+    ngayTaoDon,
+    thongTinGiaoHang,
+    thongTinThanhToan,
+    tinhTrang,
+    tongGia,
+    userId,
+    danhSach,
+  } = data;
   // Check exits data
   return new Promise(async (resolve, reject) => {
     const donHang = await db.DonHang.findOne({ where: { id: id } });
@@ -96,17 +107,19 @@ const updateDonHang = (data) => {
       donHang.maDonHang = maDonHang || donHang.maDonHang;
       donHang.ngayTaoDon = ngayTaoDon || donHang.ngayTaoDon;
       donHang.thongTinGiaoHang = thongTinGiaoHang || donHang?.thongTinGiaoHang;
-      donHang.thongTinThanhToan = thongTinThanhToan || donHang?.thongTinThanhToan;
+      donHang.thongTinThanhToan =
+        thongTinThanhToan || donHang?.thongTinThanhToan;
       donHang.tinhTrang = tinhTrang || donHang?.tinhTrang;
       donHang.tongGia = tongGia || donHang?.tongGia;
       donHang.userId = userId || donHang?.userId;
-      if(tinhTrang === 4) {
+      if (tinhTrang === 4) {
         for (let sanPham of danhSach) {
           const sachResult = await db.SanPham.findOne({
             id: sanPham?.sanPham?.id,
           });
           if (sachResult) {
-            const soLuongNew = sachResult?.dataValues.soLuong + sanPham?.soLuong;
+            const soLuongNew =
+              sachResult?.dataValues.soLuong + sanPham?.soLuong;
             const sanPhamNew = await db.SanPham.findOne({
               id: sanPham?.sanPham?.id,
             });
@@ -125,4 +138,20 @@ const updateDonHang = (data) => {
   });
 };
 
-module.exports = { createNewDonHang, getDonHangByIdUser, updateDonHang };
+const getAllDonHang = async (data) => {
+  return new Promise(async (resolve, reject) => {
+    const donHangs = await db.DonHang.findAll();
+    if (donHangs) {
+      resolve({ data: donHangs, message: "Lấy thành công" });
+    } else {
+      reject({ message: "Error" });
+    }
+  });
+};
+
+module.exports = {
+  createNewDonHang,
+  getDonHangByIdUser,
+  updateDonHang,
+  getAllDonHang,
+};

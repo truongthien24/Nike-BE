@@ -12,7 +12,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       maThuongHieu: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
       maMauSac: {
         type: Sequelize.STRING,
@@ -21,7 +21,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       maKhuyenMai: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
       hinhAnh: {
         type: Sequelize.STRING,
@@ -35,8 +35,18 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       soLuong: {
-        allowNull: false,
         type: Sequelize.INTEGER,
+      },
+      kichCo: {
+        type: Sequelize.TEXT,
+        defaultValue: [],
+        get() {
+          const rawValue = this.getDataValue("kichCo");
+          return rawValue ? JSON.parse(rawValue) : [];
+        },
+        set(value) {
+          this.setDataValue("kichCo", JSON.stringify(value));
+        },
       },
       moTa: {
         type: Sequelize.STRING,

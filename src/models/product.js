@@ -18,7 +18,6 @@ module.exports = (sequelize, DataTypes) => {
       maSanPham: DataTypes.STRING,
       maThuongHieu: DataTypes.INTEGER,
       maMauSac: DataTypes.STRING,
-      maKichCo: DataTypes.INTEGER,
       maKhuyenMai: DataTypes.STRING,
       hinhAnh: DataTypes.STRING,
       tenSanPham: DataTypes.STRING,
@@ -27,6 +26,17 @@ module.exports = (sequelize, DataTypes) => {
       moTa: DataTypes.TEXT,
       noiDung: DataTypes.TEXT,
       trangThai: DataTypes.INTEGER,
+      kichCo: {
+        type: DataTypes.TEXT,
+        defaultValue: [],
+        get() {
+          const rawValue = this.getDataValue("kichCo");
+          return rawValue ? JSON.parse(rawValue) : [];
+        },
+        set(value) {
+          this.setDataValue("kichCo", JSON.stringify(value));
+        }
+      }
     },
     {
       sequelize,
